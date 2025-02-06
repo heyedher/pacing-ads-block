@@ -262,9 +262,11 @@ dimension: primary_key {
     hidden: no
   }
   measure: roas {
+    label: "ROAS"
     description: "Return on ad Spend"
     type: number
-    sql: (${revenue}/${spend})*100 ;;
+    sql: (${revenue}/${spend});;
+    value_format: "#0.00%"
     hidden: no
   }
 
