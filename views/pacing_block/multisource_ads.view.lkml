@@ -9,36 +9,36 @@ view: multisource_ads {
 
   derived_table: {
     sql:
-  , blank_query AS (SELECT "" as primary_key,
-  CAST("2023-10-14T22:11:20+0000"  AS TIMESTAMP) AS partition_date_date,
-  "" AS ad_account_id,
-  "" AS ad_account_name,
-  "" AS campaign_id,
-  "" AS campaign_name,
-  "" AS ad_set_id,
-  "" AS ad_set_name,
-  "" AS ad_source,
-  "" AS ad_id,
-  "" AS ad_name,
-  0 AS total_spent,
-  0 AS total_impressions,
-  0 AS total_clicks,
-  0 AS total_revenue,
-  0 AS total_conversions)
+      , blank_query AS (SELECT "" as primary_key,
+      CAST("2023-10-14T22:11:20+0000"  AS TIMESTAMP) AS partition_date_date,
+      "" AS ad_account_id,
+      "" AS ad_account_name,
+      "" AS campaign_id,
+      "" AS campaign_name,
+      "" AS ad_set_id,
+      "" AS ad_set_name,
+      "" AS ad_source,
+      "" AS ad_id,
+      "" AS ad_name,
+      0 AS total_spent,
+      0 AS total_impressions,
+      0 AS total_clicks,
+      0 AS total_revenue,
+      0 AS total_conversions)
 
-  SELECT * FROM blank_query WHERE false
+      SELECT * FROM blank_query WHERE false
       UNION ALL
-  SELECT GENERATE_UUID() AS primary_key, * FROM ${dt_fb_ads.SQL_TABLE_NAME} WHERE "@{FADS_DATASET_NAME}" != ""
+      SELECT GENERATE_UUID() AS primary_key, * FROM ${dt_fb_ads.SQL_TABLE_NAME} WHERE "@{FADS_DATASET_NAME}" != ""
       UNION ALL
-  SELECT  GENERATE_UUID() AS primary_key,  * FROM ${dt_google_ads.SQL_TABLE_NAME} WHERE "@{GADS_DATASET_NAME}" != "" ;;
+      SELECT  GENERATE_UUID() AS primary_key,  * FROM ${dt_google_ads.SQL_TABLE_NAME} WHERE "@{GADS_DATASET_NAME}" != "" ;;
 
-datagroup_trigger: daily
+    datagroup_trigger: daily
   }
-drill_fields: [details*]
-dimension: primary_key {
-  hidden: yes
-  primary_key: yes
-}
+  drill_fields: [details*]
+  dimension: primary_key {
+    hidden: yes
+    primary_key: yes
+  }
 
   dimension: partition_date_date {
     label: "Date"
@@ -349,4 +349,129 @@ dimension: primary_key {
     ]
   }
 
+# --- Nav Bars ---
+
+  dimension: core_metrics_nav_bar {
+    sql: "" ;;
+    type: string
+
+    html:
+
+     <div style="border-bottom: solid 1px #4285F4;">
+
+                  <nav style="font-size: 18px; padding: 5px 10px 0 10px; height: 60px">
+
+
+      <a style="padding: 5px 15px; border-top: solid 1px #4285F4; border-left: solid 1px #4285F4; border-right: solid 1px #4285F4; border-radius: 5px 5px 0 0; float: left; line-height: 40px; font-weight: bold; background-color: #eaf1fe;" href="#"> Core Metrics Dashboard</a>
+
+      <a style="padding: 5px 15px; border-bottom: solid 1px #4285F4; float: left; line-height: 40px;" href="/dashboards/pacing_block::campaign_manager?Ad+Source={{ _filters["ad_source"] | url_encode }}&Campaign+Name={{ _filters["campaign_name"] | url_encode }}&Date={{_filters["partition_date_date"] | url_encode}}"> Campaign Manager </a>
+
+      <a style="padding: 5px 15px; border-bottom: solid 1px #4285F4; float: left; line-height: 40px;" href="/dashboards/pacing_block::campaign_comparison?Ad+Source={{ _filters["ad_source"] | url_encode }}&Campaign+Name={{ _filters["campaign_name"] | url_encode }}&Date={{_filters["partition_date_date"] | url_encode}}"> Marketing Campaign Comparison </a>
+
+      <a style="padding: 5px 15px; border-bottom: solid 1px #4285F4; float: left; line-height: 40px;" href="/dashboards/pacing_block::spend_revenue?Ad+Source={{ _filters["ad_source"] | url_encode }}&Campaign+Name={{ _filters["campaign_name"] | url_encode }}&Date={{_filters["partition_date_date"] | url_encode}}"> Spend & Revenue </a>
+
+      </nav>
+
+      </div>
+      ;;
+  }
+  dimension: campaign_manager_nav_bar {
+    sql: "" ;;
+    type: string
+
+    html:
+
+     <div style="border-bottom: solid 1px #4285F4;">
+
+                                    <nav style="font-size: 18px; padding: 5px 10px 0 10px; height: 60px">
+
+
+      <a style="padding: 5px 15px; border-bottom: solid 1px #4285F4; float: left; line-height: 40px;" href="/dashboards/pacing_block::core_metrics?Ad+Source={{ _filters["ad_source"] | url_encode }}&Campaign+Name={{ _filters["campaign_name"] | url_encode }}&Date={{_filters["partition_date_date"] | url_encode}}"> Core Metrics Dashboard</a>
+
+      <a style="padding: 5px 15px; border-top: solid 1px #4285F4; border-left: solid 1px #4285F4; border-right: solid 1px #4285F4; border-radius: 5px 5px 0 0; float: left; line-height: 40px; font-weight: bold; background-color: #eaf1fe;" href="#"> Campaign Manager </a>
+
+      <a style="padding: 5px 15px; border-bottom: solid 1px #4285F4; float: left; line-height: 40px;" href="/dashboards/pacing_block::campaign_comparison?Ad+Source={{ _filters["ad_source"] | url_encode }}&Campaign+Name={{ _filters["campaign_name"] | url_encode }}&Date={{_filters["partition_date_date"] | url_encode}}"> Marketing Campaign Comparison </a>
+
+      <a style="padding: 5px 15px; border-bottom: solid 1px #4285F4; float: left; line-height: 40px;" href="/dashboards/pacing_block::spend_revenue?Ad+Source={{ _filters["ad_source"] | url_encode }}&Campaign+Name={{ _filters["campaign_name"] | url_encode }}&Date={{_filters["partition_date_date"] | url_encode}}"> Spend & Revenue </a>
+
+      </nav>
+
+      </div>
+      ;;
+  }
+
+  dimension: campaign_comparison_nav_bar {
+    sql: "" ;;
+    type: string
+
+    html:
+
+     <div style="border-bottom: solid 1px #4285F4;">
+
+                                    <nav style="font-size: 18px; padding: 5px 10px 0 10px; height: 60px">
+
+
+      <a style="padding: 5px 15px; border-bottom: solid 1px #4285F4; float: left; line-height: 40px;" href="/dashboards/pacing_block::core_metrics?Ad+Source={{ _filters["ad_source"] | url_encode }}&Campaign+Name={{ _filters["campaign_name"] | url_encode }}&Date={{_filters["partition_date_date"] | url_encode}}"> Core Metrics Dashboard</a>
+
+      <a style="padding: 5px 15px; border-bottom: solid 1px #4285F4; float: left; line-height: 40px;" href="/dashboards/pacing_block::campaign_manager?Ad+Source={{ _filters["ad_source"] | url_encode }}&Campaign+Name={{ _filters["campaign_name"] | url_encode }}&Date={{_filters["partition_date_date"] | url_encode}}"> Campaign Manager </a>
+
+      <a style="padding: 5px 15px; border-top: solid 1px #4285F4; border-left: solid 1px #4285F4; border-right: solid 1px #4285F4; border-radius: 5px 5px 0 0; float: left; line-height: 40px; font-weight: bold; background-color: #eaf1fe;" href="#"> Marketing Campaign Comparison </a>
+
+      <a style="padding: 5px 15px; border-bottom: solid 1px #4285F4; float: left; line-height: 40px;" href="/dashboards/pacing_block::spend_revenue?Ad+Source={{ _filters["ad_source"] | url_encode }}&Campaign+Name={{ _filters["campaign_name"] | url_encode }}&Date={{_filters["partition_date_date"] | url_encode}}"> Spend & Revenue </a>
+
+      </nav>
+
+      </div>
+      ;;
+  }
+
+  dimension: spend_revenue_nav_bar {
+
+    sql: "" ;;
+    type: string
+    html:
+
+     <div style="border-bottom: solid 1px #4285F4;">
+
+                                    <nav style="font-size: 18px; padding: 5px 10px 0 10px; height: 60px">
+
+
+      <a style="padding: 5px 15px; border-bottom: solid 1px #4285F4; float: left; line-height: 40px;" href="/dashboards/pacing_block::core_metrics?Ad+Source={{ _filters["ad_source"] | url_encode }}&Campaign+Name={{ _filters["campaign_name"] | url_encode }}&Date={{_filters["partition_date_date"] | url_encode}}"> Core Metrics Dashboard</a>
+
+      <a style="padding: 5px 15px; border-bottom: solid 1px #4285F4; float: left; line-height: 40px;" href="/dashboards/pacing_block::campaign_manager?Ad+Source={{ _filters["ad_source"] | url_encode }}&Campaign+Name={{ _filters["campaign_name"] | url_encode }}&Date={{_filters["partition_date_date"] | url_encode}}"> Campaign Manager </a>
+
+      <a style="padding: 5px 15px; border-bottom: solid 1px #4285F4; float: left; line-height: 40px;" href="/dashboards/pacing_block::campaign_comparison?Ad+Source={{ _filters["ad_source"] | url_encode }}&Campaign+Name={{ _filters["campaign_name"] | url_encode }}&Date={{_filters["partition_date_date"] | url_encode}}"> Marketing Campaign Comparison </a>
+
+      <a style="padding: 5px 15px; border-top: solid 1px #4285F4; border-left: solid 1px #4285F4; border-right: solid 1px #4285F4; border-radius: 5px 5px 0 0; float: left; line-height: 40px; font-weight: bold; background-color: #eaf1fe;" href="#"> Spend & Revenue </a>
+
+      </nav>
+
+      </div>
+      ;;
+  }
+
+  dimension: pop_nav_bar {
+
+    sql: "" ;;
+    type: string
+    html:
+
+     <div style="border-bottom: solid 1px #4285F4;">
+
+                                    <nav style="font-size: 18px; padding: 5px 10px 0 10px; height: 60px">
+
+
+      <a style="padding: 5px 15px; border-bottom: solid 1px #4285F4; float: left; line-height: 40px;" href="/dashboards/pacing_block::core_metrics?Ad+Source={{ _filters["ad_source"] | url_encode }}&Campaign+Name={{ _filters["campaign_name"] | url_encode }}&Date={{_filters["partition_date_date"] | url_encode}}"> Core Metrics Dashboard</a>
+
+      <a style="padding: 5px 15px; border-bottom: solid 1px #4285F4; float: left; line-height: 40px;" href="/dashboards/pacing_block::campaign_manager?Ad+Source={{ _filters["ad_source"] | url_encode }}&Campaign+Name={{ _filters["campaign_name"] | url_encode }}&Date={{_filters["partition_date_date"] | url_encode}}"> Campaign Manager </a>
+
+      <a style="padding: 5px 15px; border-bottom: solid 1px #4285F4; float: left; line-height: 40px;" href="/dashboards/pacing_block::campaign_comparison?Ad+Source={{ _filters["ad_source"] | url_encode }}&Campaign+Name={{ _filters["campaign_name"] | url_encode }}&Date={{_filters["partition_date_date"] | url_encode}}"> Marketing Campaign Comparison </a>
+
+      <a style="padding: 5px 15px; border-bottom: solid 1px #4285F4; float: left; line-height: 40px;" href="/dashboards/pacing_block::spend_revenue?Ad+Source={{ _filters["ad_source"] | url_encode }}&Campaign+Name={{ _filters["campaign_name"] | url_encode }}&Date={{_filters["partition_date_date"] | url_encode}}"> Spend & Revenue </a>
+
+      </nav>
+
+      </div>
+      ;;
+  }
 }

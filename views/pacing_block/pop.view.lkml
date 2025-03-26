@@ -42,22 +42,22 @@ view: period_over_period {
     description: "Select the templated previous period you would like to compare to. Must be used with Current Date Range filter"
     label: "Compare To:"
     type: unquoted
-    allowed_value: {
-      label: "Previous Period"
-      value: "Period"
-    }
-    allowed_value: {
-      label: "Previous Week"
-      value: "Week"
-    }
+   # allowed_value: {
+    #  label: "Previous Period"
+     # value: "Period"
+    #}
+    #allowed_value: {
+     # label: "Previous Week"
+      #value: "Week"
+    #}
     allowed_value: {
       label: "Previous Month"
       value: "Month"
     }
-    allowed_value: {
-      label: "Previous Quarter"
-      value: "Quarter"
-    }
+    #allowed_value: {
+     # label: "Previous Quarter"
+      #value: "Quarter"
+    #}
     allowed_value: {
       label: "Previous Year"
       value: "Year"
@@ -86,14 +86,15 @@ view: period_over_period {
     description: "Calculates the start of the previous period or same equivalent date in the previous year"
     type: date
     sql:
-      {% if compare_to._parameter_value == "Year" %}
-      DATE_SUB(DATE({% date_start current_date_range %}), INTERVAL 1 YEAR)
-      {% elsif compare_to._parameter_value == "Period" %}
-      DATE_ADD(DATE({% date_start current_date_range %}), INTERVAL ${days_in_period} DAY)
-      {% else %}
-      DATE_SUB(DATE({% date_start current_date_range %}), INTERVAL 1 {% parameter compare_to %})
-      {% endif %} ;;  # Added logic for "Year" to compare equivalent dates year-over-year
+   {% if compare_to._parameter_value == "Year" %}
+   DATE_SUB(DATE({% date_start current_date_range %}), INTERVAL 1 YEAR)
+   {% elsif compare_to._parameter_value == "Period" %}
+   DATE_SUB(DATE({% date_start current_date_range %}), INTERVAL ${days_in_period} DAY)
+   {% else %}
+   DATE_SUB(DATE({% date_start current_date_range %}), INTERVAL 1 {% parameter compare_to %})
+   {% endif %} ;;
     convert_tz: no
+    html: <font size="6">{{ value }}</font>;;
   }
 
   dimension: current_period_start {
@@ -109,6 +110,7 @@ view: period_over_period {
     DATE({% date_start current_date_range %})
     {% endif %};;
     convert_tz: no
+    html: <font size="6">{{ value }}</font>;;
   }
 
   dimension: period_2_end {
@@ -118,14 +120,15 @@ view: period_over_period {
     description: "Calculates the end of the previous period or same equivalent date in the previous year"
     type: date
     sql:
-      {% if compare_to._parameter_value == "Year" %}
-      DATE_SUB(DATE({% date_end current_date_range %}), INTERVAL 1 YEAR)
-      {% elsif compare_to._parameter_value == "Period" %}
-      DATE_SUB(DATE({% date_start current_date_range %}), INTERVAL 1 DAY)
-      {% else %}
-      DATE_SUB(DATE_SUB(DATE({% date_end current_date_range %}), INTERVAL 1 DAY), INTERVAL 1 {% parameter compare_to %})
-      {% endif %} ;;  # Added logic for "Year" to compare equivalent dates year-over-year
+        {% if compare_to._parameter_value == "Year" %}
+        DATE_SUB(DATE({% date_end current_date_range %}), INTERVAL 1 YEAR)
+        {% elsif compare_to._parameter_value == "Period" %}
+        DATE_SUB(DATE({% date_end current_date_range %}), INTERVAL ${days_in_period} DAY)
+        {% else %}
+        DATE_SUB(DATE({% date_end current_date_range %}), INTERVAL 1 {% parameter compare_to %})
+        {% endif %} ;;
     convert_tz: no
+    html: <font size="6">{{ value }}</font>;;
   }
   dimension: current_period_end {
     hidden: no
@@ -140,7 +143,36 @@ view: period_over_period {
     DATE({% date_end current_date_range %})
     {% endif %};;
     convert_tz: no
+    html: <font size="6">{{ value }}</font>;;
   }
+
+  dimension: current_period_end_vis {
+    type: date
+    hidden: no
+    sql: ${current_period_end} - 1  ;;
+  }
+  dimension: previous_period_end_vis {
+    type: date
+    hidden: no
+    sql: ${period_2_end} - 1  ;;
+  }
+  dimension: current_period {
+    type: string
+    sql: " ";;
+    html: <p style="font-size:20px"> <strong> Start:  </strong> {{ current_period_start._rendered_value }}</p>
+             <p style="font-size:20px"> <strong> End:  </strong>{{ current_period_end_vis._rendered_value }}</p>;;
+    hidden: no
+
+  }
+
+  dimension: previous_period {
+    type: string
+    sql: " ";;
+    html: <p style="font-size:20px"> <strong> Start:  </strong> {{ period_2_start._rendered_value }}</p></br>
+           <p style="font-size:20px"> <strong> End:  </strong>{{ previous_period_end_vis._rendered_value }}</p>;;
+    hidden: no
+   }
+
   dimension: day_in_period {
     hidden: yes
     description: "Gives the number of days since the start of each period. Use this to align the event dates onto the same axis, the axes will read 1,2,3, etc."
@@ -182,7 +214,7 @@ view: period_over_period {
   dimension_group: date_in_period {
     #hidden: no
     description: "Use this as your grouping dimension when comparing periods. Aligns the previous periods onto the current period"
-    label: "Current Period"
+    label: "Period"
     type: time
     # sql: DATE_ADD( ${day_in_period} - 1, DATE({% date_start current_date_range %}), DAY) ;;
     sql: DATE_SUB(DATE({% date_start current_date_range %}), INTERVAL (${day_in_period} - 1) DAY)  ;;
@@ -202,7 +234,6 @@ view: period_over_period {
       year]
     convert_tz: no
     datatype: date
-   drill_fields: [date_in_period_year, date_in_period_month, date_in_period_week, current_metric, previous_metric]
   }
 
 
@@ -381,7 +412,7 @@ view: period_over_period {
     {% elsif metric_selector._parameter_value == 'total_spend' %}
     Current Spend
     {% elsif metric_selector._parameter_value == 'total_revenue' %}
-    Current Product Revenue
+    Current Revenue
     {% else %}
     Current Metric
     {% endif %}"
@@ -391,7 +422,7 @@ view: period_over_period {
       ${current_period_impressions}
     {% elsif metric_selector._parameter_value == 'total_clicks' %}
       ${current_period_clicks}
-    {% elsif metric_selector._parameter_value == 'total_spent' %}
+    {% elsif metric_selector._parameter_value == 'total_spend' %}
       ${current_period_spend}
     {% elsif metric_selector._parameter_value == 'total_revenue' %}
       ${current_period_revenue}
@@ -404,6 +435,7 @@ view: period_over_period {
       url: "{{ link }}&limit=20"
     }
     drill_fields: [ad_source,ad_set_name,campaign_name, ad_name, current_metric]
+    value_format: "#,##0.00"
   }
 
   measure: previous_metric {
@@ -417,7 +449,7 @@ view: period_over_period {
     {% elsif metric_selector._parameter_value == 'total_spend' %}
     Previous Spend
     {% elsif metric_selector._parameter_value == 'total_revenue' %}
-    Previous Product Revenue
+    Previous Revenue
     {% else %}
     Previous Metric
     {% endif %}"
@@ -427,7 +459,7 @@ view: period_over_period {
       ${previous_period_impressions}
     {% elsif metric_selector._parameter_value == 'total_clicks' %}
       ${previous_period_clicks}
-    {% elsif metric_selector._parameter_value == 'total_spent' %}
+    {% elsif metric_selector._parameter_value == 'total_spend' %}
       ${previous_period_spend}
     {% elsif metric_selector._parameter_value == 'total_revenue' %}
       ${previous_period_revenue}
@@ -440,6 +472,7 @@ view: period_over_period {
       url: "{{ link }}&limit=20"
     }
     drill_fields: [ad_source,ad_set_name,campaign_name, ad_name, previous_metric]
+    value_format: "#,##0.00"
   }
 
   measure: percentage_change {
@@ -450,10 +483,10 @@ view: period_over_period {
     hidden: no
     sql:
     {% if metric_selector._parameter_value == 'total_impressions' %}
-      ${clicks_pop_change}
-    {% elsif metric_selector._parameter_value == 'total_clicks' %}
       ${impressions_pop_change}
-    {% elsif metric_selector._parameter_value == 'total_spent' %}
+    {% elsif metric_selector._parameter_value == 'total_clicks' %}
+      ${clicks_pop_change}
+    {% elsif metric_selector._parameter_value == 'total_spend' %}
       ${spend_pop_change}
     {% elsif metric_selector._parameter_value == 'total_revenue' %}
       ${revenue_pop_change}
@@ -461,7 +494,6 @@ view: period_over_period {
       0
       {% endif %} ;;
     value_format_name: percent_2
-
   }
 #-------------------------------Parameters-----------------------------------------------
 
@@ -485,9 +517,27 @@ view: period_over_period {
       value: "total_spend"
     }
     allowed_value: {
-      label: "Product Revenue"
+      label: "Revenue"
       value: "total_revenue"
     }
   }
+
+  ###### HIDDEN FROM MULTISOURCE #############3
+  parameter: set_clicks_goal {
+    hidden: yes
+  }
+  parameter: set_impressions_goal {
+    hidden: yes
+  }
+  parameter: set_conversions_goal {
+    hidden: yes
+  }
+  parameter: set_cost_goal {
+    hidden: yes
+  }
+  parameter: KPI_select {
+    hidden: no
+  }
+
 
 }
