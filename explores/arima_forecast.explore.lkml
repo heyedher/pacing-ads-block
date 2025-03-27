@@ -1,5 +1,6 @@
 include: "/views/pacing_block/forecasting/*.view.lkml"
 include: "/views/pacing_block/multisource_ads.view.lkml"
+include: "/views/pacing_block/ForecastForm/predictions_form.view.lkml"
 
 # ####### Forecast ####### #
 explore: training {hidden: yes}
@@ -16,3 +17,7 @@ explore: current_vs_arima {
     relationship: one_to_one
   }
 }
+
+
+##########33
+explore: predictions_form {}

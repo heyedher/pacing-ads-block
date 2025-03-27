@@ -9,17 +9,17 @@ constant: CONNECTION_NAME {
 }
 
 constant: PROJECT_ID {
-  value: ""
+  value: "looker-marketplace"
   export: override_required
 }
 ### For tracking Goals
 constant: SHEETS_DATASET_NAME {
-  value: ""
+  value: "PacingDashData"
   export: override_optional
 }
 
 constant: SHEETS_CAMPAIGN_TABLE {
-  value: ""
+  value: "campaigns_info"
   export: override_optional
 }
 
@@ -27,17 +27,17 @@ constant: SHEETS_CAMPAIGN_TABLE {
 ## Leave the value empty (value:"") if you're not using the source, otherwise you'll get an error
 
 constant: FADS_DATASET_NAME {
-  value: ""
+  value: "PacingDashData"
   export: override_optional
 }
 
 constant: GADS_DATASET_NAME {
-  value: ""
+  value: "SynthGoogleAds"
   export: override_optional
 }
 
 constant: GADS_CUSTOMER_ID {
-  value: ""
+  value: "4717384083"
   export: override_optional
 }
 
